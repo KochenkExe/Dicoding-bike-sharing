@@ -9,6 +9,5 @@ pip install numpy pandas matplotlib seaborn streamlit
 
 ## Run steamlit app
 ```
-cd dashboard
-py -m streamlit run dashboard.py
+py -m streamlit run dashboard/dashboard.py
 ```
