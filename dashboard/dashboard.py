@@ -11,8 +11,8 @@ st.subheader("Pertanyaan")
 st.write("1. Di musim berapakah pengguna sepeda paling banyak?")
 st.write("2. Berapa rata-rata pengguna per harinya?")
 
-df_day = pd.read_csv('day.csv')
-df_hour = pd.read_csv('hour.csv')
+df_day = pd.read_csv('data/day.csv')
+df_hour = pd.read_csv('data/hour.csv')
 
 # Data Wrangling
 df_day['dteday'] = pd.to_datetime(df_day['dteday'])
