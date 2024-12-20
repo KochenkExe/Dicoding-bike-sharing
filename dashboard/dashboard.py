@@ -11,7 +11,6 @@ st.subheader("Pertanyaan")
 st.write("1. Di musim berapakah pengguna sepeda paling banyak?")
 st.write("2. Berapa rata-rata pengguna per harinya?")
 
-
 df_day = pd.read_csv('day.csv')
 df_hour = pd.read_csv('hour.csv')
 
@@ -34,9 +33,16 @@ df_day['weekday'] = df_day['weekday'].astype('category')
 df_day['weathersit'] = df_day['weathersit'].astype('category')
 
 # Analysis: Number of users per season
-season_counts = df_day.groupby('season')['cnt'].sum().reset_index().sort_values('cnt', ascending=False)
+season_mapping = {
+    1: 'Musim Semi',
+    2: 'Musim Panas',
+    3: 'Musim Gugur',
+    4: 'Musim Dingin'
+}
+df_day['season_name'] = df_day['season'].map(season_mapping)
+season_counts = df_day.groupby('season_name')['cnt'].sum().reset_index().sort_values('cnt', ascending=False)
 st.subheader("Jumlah Pengguna per Musim")
-st.bar_chart(season_counts.set_index('season'))
+st.bar_chart(season_counts.set_index('season_name'))
 
 # Analysis: Average users per day
 weekday_mapping = {
@@ -56,6 +62,24 @@ average_users_by_weekday = average_users_by_weekday.sort_values('weekday_name')
 st.subheader("Rata-rata Pengguna per Hari")
 st.bar_chart(average_users_by_weekday.set_index('weekday_name'))
 
+weather_mapping = {
+    1: 'Cerah',
+    2: 'Mendung',
+    3: 'Hujan Ringan',
+    4: 'Hujan Lebat'
+}
+df_day['weather_name'] = df_day['weathersit'].map(weather_mapping)
+
+selected_weather = st.selectbox("Pilih Kondisi Cuaca", df_day['weather_name'].unique())
+filtered_data = df_day[df_day['weather_name'] == selected_weather]
+
+average_users_by_weather = filtered_data.groupby('weekday_name')['cnt'].mean().reset_index().sort_values('cnt', ascending=False)
+average_users_by_weather['weekday_name'] = pd.Categorical(average_users_by_weather['weekday_name'], categories=weekday_order, ordered=True)
+average_users_by_weather = average_users_by_weather.sort_values('weekday_name')
+
+st.subheader(f"Rata-rata Pengguna per Hari untuk Cuaca: {selected_weather}")
+st.bar_chart(average_users_by_weather.set_index('weekday_name'))
+
 st.subheader("Kesimpulan")
-st.write("1. Pada grafik jumlah pengguna per musim, musim ke-3 memiliki jumlah pengguna paling banyak.")
+st.write("1. Pada grafik jumlah pengguna per musim, musim gugur memiliki jumlah pengguna paling banyak.")
 st.write("2. Pada grafik rata-rata pengguna per hari, pengguna paling banyak pada hari Jum'at.")
